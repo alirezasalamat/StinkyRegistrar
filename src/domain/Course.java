@@ -14,11 +14,11 @@ public class Course {
 		this.id = id;
 		this.name = name;
 		this.units = units;
-		prerequisites = new ArrayList<Course>();
+		prerequisites = new ArrayList<>();
 	}
 	
-	public void addPre(Course c) {
-		getPrerequisites().add(c);
+	public void addPre(Course course) {
+		prerequisites.add(course);
 	}
 
 	public Course withPre(Course... pres) {
@@ -54,8 +54,7 @@ public class Course {
 		return id;
 	}
 
-	public boolean equals(Object obj) {
-		Course other = (Course)obj;
-		return id.equals(other.id);
+	public boolean equals(Course course) {
+		return id.equals(course.id);
 	}
 }

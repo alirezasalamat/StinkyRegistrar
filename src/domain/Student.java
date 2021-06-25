@@ -9,15 +9,6 @@ import java.util.Map;
 public class Student {
 	private String id;
 	private String name;
-
-//	static class CourseSection {
-//        CourseSection(Course course, int section) {
-//            this.course = course;
-//            this.section = section;
-//        }
-//        Course course;
-//	    int section;
-//    }
 	private Map<Term, Map<Course, Double>> transcript;
 	private List<Offering> currentTerm;
 
@@ -45,10 +36,10 @@ public class Student {
 	public double getGPA() {
 		double points = 0;
 		int totalUnits = 0;
-		for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
-			for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
-				points += r.getValue() * r.getKey().getUnits();
-				totalUnits += r.getKey().getUnits();
+		for (Map.Entry<Term, Map<Course, Double>> termTranscript : transcript.entrySet()) {
+			for (Map.Entry<Course, Double> gradedCourse : termTranscript.getValue().entrySet()) {
+				points += gradedCourse.getValue() * gradedCourse.getKey().getUnits();
+				totalUnits += gradedCourse.getKey().getUnits();
 			}
 		}
 		return points / totalUnits;
@@ -71,9 +62,9 @@ public class Student {
 	}
 
 	public boolean hasPassed(Course course) {
-		for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
-			for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
-				if (r.getKey().equals(course) && r.getValue() >= 10)
+		for (Map.Entry<Term, Map<Course, Double>> termTranscript : transcript.entrySet()) {
+			for (Map.Entry<Course, Double> gradedCourse : termTranscript.getValue().entrySet()) {
+				if (gradedCourse.getKey().equals(course) && gradedCourse.getValue() >= 10)
 					return true;
 			}
 		}

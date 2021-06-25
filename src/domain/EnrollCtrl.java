@@ -52,6 +52,6 @@ public class EnrollCtrl {
 				(unitsRequested > 20))
 			throw new EnrollmentRulesViolationException(String.format("Number of units (%d) requested does not match GPA of %f", unitsRequested, gpa));
 		for (CSE o : courses)
-			s.takeCourse(o.getCourse(), o.getSection());
+			s.takeCourse(o);
 	}
 }

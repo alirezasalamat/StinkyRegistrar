@@ -19,7 +19,7 @@ public class Student {
 //	    int section;
 //    }
 	private Map<Term, Map<Course, Double>> transcript;
-	private List<CSE> currentTerm;
+	private List<Offering> currentTerm;
 
 	public Student(String id, String name) {
 		this.id = id;
@@ -28,7 +28,7 @@ public class Student {
 		this.currentTerm = new ArrayList<>();
 	}
 	
-	public void takeCourse(CSE cse) {
+	public void takeCourse(Offering cse) {
 		currentTerm.add(cse);
 	}
 
@@ -54,7 +54,7 @@ public class Student {
 		return points / totalUnits;
 	}
 
-    public List<CSE> getCurrentTerm() {
+    public List<Offering> getCurrentTerm() {
         return currentTerm;
     }
 

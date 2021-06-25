@@ -6,20 +6,20 @@ import java.util.Map;
 import domain.exceptions.EnrollmentRulesViolationException;
 
 public class EnrollCtrl {
-	public void enroll(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
+	public void enroll(Student s, List<Offering> offerings) throws EnrollmentRulesViolationException {
         Map<Term, Map<Course, Double>> transcript = s.getTranscript();
-        CheckForAlreadyPassedCourses(s, courses);
-        checkForPrerequisites(s, courses);
-        checkForExamTimeConflict(courses);
-        checkForDuplicateTakenCourse(courses);
-        checkForGPALimit(s, courses);
-        for (CSE o : courses)
-			s.takeCourse(o);
+        CheckForAlreadyPassedCourses(s, offerings);
+        checkForPrerequisites(s, offerings);
+        checkForExamTimeConflict(offerings);
+        checkForDuplicateTakenCourse(offerings);
+        checkForGPALimit(s, offerings);
+        for (Offering course : offerings)
+			s.takeCourse(course);
 	}
 
-    private void checkForDuplicateTakenCourse(List<CSE> courses) throws EnrollmentRulesViolationException {
-        for (CSE o : courses) {
-            for (CSE o2 : courses) {
+    private void checkForDuplicateTakenCourse(List<Offering> courses) throws EnrollmentRulesViolationException {
+        for (Offering o : courses) {
+            for (Offering o2 : courses) {
                 if (o == o2)
                     continue;
                 if (o.getCourse().equals(o2.getCourse()))
@@ -28,9 +28,9 @@ public class EnrollCtrl {
         }
     }
 
-    private void checkForExamTimeConflict(List<CSE> courses) throws EnrollmentRulesViolationException {
-        for (CSE o : courses) {
-            for (CSE o2 : courses) {
+    private void checkForExamTimeConflict(List<Offering> courses) throws EnrollmentRulesViolationException {
+        for (Offering o : courses) {
+            for (Offering o2 : courses) {
                 if (o == o2)
                     continue;
                 if (o.getExamTime().equals(o2.getExamTime()))
@@ -39,8 +39,8 @@ public class EnrollCtrl {
 		}
     }
 
-    public void checkForPrerequisites(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
-        for (CSE o : courses) {
+    public void checkForPrerequisites(Student s, List<Offering> courses) throws EnrollmentRulesViolationException {
+        for (Offering o : courses) {
             for (Course pre : o.getCourse().getPrerequisites()) {
                 if (!s.hasPassed(pre)) {
                     throw new EnrollmentRulesViolationException(String.format("The student has not passed %s as a prerequisite of %s", pre.getName(), o.getCourse().getName()));
@@ -49,15 +49,15 @@ public class EnrollCtrl {
         }
     }
 
-    public void CheckForAlreadyPassedCourses(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
-        for (CSE o : courses) {
+    public void CheckForAlreadyPassedCourses(Student s, List<Offering> courses) throws EnrollmentRulesViolationException {
+        for (Offering o : courses) {
             if(s.hasPassed(o.getCourse())){
                 throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", o.getCourse().getName()));
             }
         }
     }
 
-    public void checkForGPALimit(Student s, List<CSE> offerings) throws EnrollmentRulesViolationException {
+    public void checkForGPALimit(Student s, List<Offering> offerings) throws EnrollmentRulesViolationException {
         int unitsRequested = offerings.stream().mapToInt(o -> o.getCourse().getUnits()).sum();
         if ((s.getGPA() < 12 && unitsRequested > 14) ||
 				(s.getGPA() < 16 && unitsRequested > 16) ||

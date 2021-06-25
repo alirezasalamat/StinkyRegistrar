@@ -9,12 +9,10 @@ public class EnrollCtrl {
 	public void enroll(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
         Map<Term, Map<Course, Double>> transcript = s.getTranscript();
 		for (CSE o : courses) {
-            for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
-                for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
-                    if (r.getKey().equals(o.getCourse()) && r.getValue() >= 10)
-                        throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", o.getCourse().getName()));
-                }
+		    if(s.hasPassed(o.getCourse())){
+                throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", o.getCourse().getName()));
             }
+
 			List<Course> prereqs = o.getCourse().getPrerequisites();
 			nextPre:
 			for (Course pre : prereqs) {

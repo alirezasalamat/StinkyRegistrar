@@ -40,7 +40,7 @@ public class Student {
 	    transcript.get(term).put(course, grade);
     }
 
-	public double getGpa() {
+	public double getGPA() {
 		double points = 0;
 		int totalUnits = 0;
 		for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {

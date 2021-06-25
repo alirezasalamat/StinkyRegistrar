@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnrollCtrl {
-	public List<Exception> enroll(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
+	public List<Exception> enroll(Student student, List<Offering> offerings) {
 	    List<Exception> violations = new ArrayList<>();
 
         violations.addAll(checkForPrerequisites(student, offerings));
@@ -15,11 +15,12 @@ public class EnrollCtrl {
         violations.addAll(checkForDuplicateTakenCourse(offerings));
         violations.addAll(checkForGPALimit(student, offerings));
 
-        offerings.forEach(student::takeCourse);
+        if (violations.isEmpty())
+            offerings.forEach(student::takeCourse);
         return violations;
 	}
 
-    private List<Exception> checkForDuplicateTakenCourse(List<Offering> offerings) throws EnrollmentRulesViolationException {
+    private List<Exception> checkForDuplicateTakenCourse(List<Offering> offerings) {
         List<Exception> violations = new ArrayList<>();
         for (Offering offering1 : offerings) {
             for (Offering offering2 : offerings) {
@@ -33,7 +34,7 @@ public class EnrollCtrl {
         return violations;
     }
 
-    private List<Exception> checkForExamTimeConflict(List<Offering> offerings) throws EnrollmentRulesViolationException {
+    private List<Exception> checkForExamTimeConflict(List<Offering> offerings) {
         List<Exception> violations = new ArrayList<>();
 	    for (Offering offering1 : offerings) {
             for (Offering offering2 : offerings) {
@@ -47,7 +48,7 @@ public class EnrollCtrl {
         return violations;
     }
 
-    public List<Exception> checkForPrerequisites(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
+    public List<Exception> checkForPrerequisites(Student student, List<Offering> offerings) {
         List<Exception> violations = new ArrayList<>();
 	    for (Offering offering : offerings) {
             for (Course pre : offering.getCourse().getPrerequisites()) {
@@ -60,7 +61,7 @@ public class EnrollCtrl {
         return violations;
     }
 
-    public List<Exception> checkForAlreadyPassedCourses(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
+    public List<Exception> checkForAlreadyPassedCourses(Student student, List<Offering> offerings) {
         List<Exception> violations = new ArrayList<>();
 	    for (Offering offering : offerings) {
             if(student.hasPassed(offering.getCourse())){
@@ -71,7 +72,7 @@ public class EnrollCtrl {
         return violations;
     }
 
-    public List<Exception> checkForGPALimit(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
+    public List<Exception> checkForGPALimit(Student student, List<Offering> offerings) {
         List<Exception> violations = new ArrayList<>();
 	    int unitsRequested = offerings.stream().mapToInt(offering -> offering.getCourse().getUnits()).sum();
         if ((student.getGPA() < 12 && unitsRequested > 14) ||

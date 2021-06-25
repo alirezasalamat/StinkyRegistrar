@@ -9,18 +9,8 @@ public class EnrollCtrl {
 	public void enroll(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
         Map<Term, Map<Course, Double>> transcript = s.getTranscript();
         CheckForAlreadyPassedCourses(s, courses);
+        checkForPrerequisites(s, courses);
         for (CSE o : courses) {
-			List<Course> prereqs = o.getCourse().getPrerequisites();
-			nextPre:
-			for (Course pre : prereqs) {
-                for (Map.Entry<Term, Map<Course, Double>> tr : transcript.entrySet()) {
-                    for (Map.Entry<Course, Double> r : tr.getValue().entrySet()) {
-                        if (r.getKey().equals(pre) && r.getValue() >= 10)
-                            continue nextPre;
-                    }
-				}
-				throw new EnrollmentRulesViolationException(String.format("The student has not passed %s as a prerequisite of %s", pre.getName(), o.getCourse().getName()));
-			}
             for (CSE o2 : courses) {
                 if (o == o2)
                     continue;
@@ -35,11 +25,21 @@ public class EnrollCtrl {
 			s.takeCourse(o);
 	}
 
+    public void checkForPrerequisites(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
+        for (CSE o : courses) {
+            for (Course pre : o.getCourse().getPrerequisites()) {
+                if (!s.hasPassed(pre)) {
+                    throw new EnrollmentRulesViolationException(String.format("The student has not passed %s as a prerequisite of %s", pre.getName(), o.getCourse().getName()));
+                }
+            }
+        }
+    }
+
     public void CheckForAlreadyPassedCourses(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
         for (CSE o : courses) {
             if(s.hasPassed(o.getCourse())){
-throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", o.getCourse().getName()));
-}
+                throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", o.getCourse().getName()));
+            }
         }
     }
 

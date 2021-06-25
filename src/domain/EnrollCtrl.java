@@ -6,15 +6,13 @@ import java.util.Map;
 import domain.exceptions.EnrollmentRulesViolationException;
 
 public class EnrollCtrl {
-	public void enroll(Student s, List<Offering> offerings) throws EnrollmentRulesViolationException {
-        Map<Term, Map<Course, Double>> transcript = s.getTranscript();
-        CheckForAlreadyPassedCourses(s, offerings);
-        checkForPrerequisites(s, offerings);
+	public void enroll(Student student, List<Offering> offerings) throws EnrollmentRulesViolationException {
+        CheckForAlreadyPassedCourses(student, offerings);
+        checkForPrerequisites(student, offerings);
         checkForExamTimeConflict(offerings);
         checkForDuplicateTakenCourse(offerings);
-        checkForGPALimit(s, offerings);
-        for (Offering course : offerings)
-			s.takeCourse(course);
+        checkForGPALimit(student, offerings);
+        offerings.forEach(student::takeCourse);
 	}
 
     private void checkForDuplicateTakenCourse(List<Offering> courses) throws EnrollmentRulesViolationException {

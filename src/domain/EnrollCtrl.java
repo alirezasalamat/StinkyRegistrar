@@ -11,6 +11,13 @@ public class EnrollCtrl {
         CheckForAlreadyPassedCourses(s, courses);
         checkForPrerequisites(s, courses);
         checkForExamTimeConflict(courses);
+        checkForDuplicateTakenCourse(courses);
+        checkForGPALimit(s, courses);
+        for (CSE o : courses)
+			s.takeCourse(o);
+	}
+
+    private void checkForDuplicateTakenCourse(List<CSE> courses) throws EnrollmentRulesViolationException {
         for (CSE o : courses) {
             for (CSE o2 : courses) {
                 if (o == o2)
@@ -19,10 +26,7 @@ public class EnrollCtrl {
                     throw new EnrollmentRulesViolationException(String.format("%s is requested to be taken twice", o.getCourse().getName()));
             }
         }
-        checkForGPALimit(s, courses);
-        for (CSE o : courses)
-			s.takeCourse(o);
-	}
+    }
 
     private void checkForExamTimeConflict(List<CSE> courses) throws EnrollmentRulesViolationException {
         for (CSE o : courses) {

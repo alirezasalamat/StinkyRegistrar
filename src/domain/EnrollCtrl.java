@@ -8,11 +8,8 @@ import domain.exceptions.EnrollmentRulesViolationException;
 public class EnrollCtrl {
 	public void enroll(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
         Map<Term, Map<Course, Double>> transcript = s.getTranscript();
-		for (CSE o : courses) {
-		    if(s.hasPassed(o.getCourse())){
-                throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", o.getCourse().getName()));
-            }
-
+        CheckForAlreadyPassedCourses(s, courses);
+        for (CSE o : courses) {
 			List<Course> prereqs = o.getCourse().getPrerequisites();
 			nextPre:
 			for (Course pre : prereqs) {
@@ -37,6 +34,14 @@ public class EnrollCtrl {
         for (CSE o : courses)
 			s.takeCourse(o);
 	}
+
+    public void CheckForAlreadyPassedCourses(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
+        for (CSE o : courses) {
+            if(s.hasPassed(o.getCourse())){
+throw new EnrollmentRulesViolationException(String.format("The student has already passed %s", o.getCourse().getName()));
+}
+        }
+    }
 
     public void checkForGPALimit(Student s, List<CSE> offerings) throws EnrollmentRulesViolationException {
         int unitsRequested = offerings.stream().mapToInt(o -> o.getCourse().getUnits()).sum();

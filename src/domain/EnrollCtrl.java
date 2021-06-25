@@ -10,20 +10,30 @@ public class EnrollCtrl {
         Map<Term, Map<Course, Double>> transcript = s.getTranscript();
         CheckForAlreadyPassedCourses(s, courses);
         checkForPrerequisites(s, courses);
+        checkForExamTimeConflict(courses);
+        for (CSE o : courses) {
+            for (CSE o2 : courses) {
+                if (o == o2)
+                    continue;
+                if (o.getCourse().equals(o2.getCourse()))
+                    throw new EnrollmentRulesViolationException(String.format("%s is requested to be taken twice", o.getCourse().getName()));
+            }
+        }
+        checkForGPALimit(s, courses);
+        for (CSE o : courses)
+			s.takeCourse(o);
+	}
+
+    private void checkForExamTimeConflict(List<CSE> courses) throws EnrollmentRulesViolationException {
         for (CSE o : courses) {
             for (CSE o2 : courses) {
                 if (o == o2)
                     continue;
                 if (o.getExamTime().equals(o2.getExamTime()))
                     throw new EnrollmentRulesViolationException(String.format("Two offerings %s and %s have the same exam time", o, o2));
-                if (o.getCourse().equals(o2.getCourse()))
-                    throw new EnrollmentRulesViolationException(String.format("%s is requested to be taken twice", o.getCourse().getName()));
             }
 		}
-        checkForGPALimit(s, courses);
-        for (CSE o : courses)
-			s.takeCourse(o);
-	}
+    }
 
     public void checkForPrerequisites(Student s, List<CSE> courses) throws EnrollmentRulesViolationException {
         for (CSE o : courses) {
